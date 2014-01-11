@@ -35,7 +35,7 @@ gulp.task('default', function(){
 
   gulp.run('server');
 
-  return gulp.src('app/**.**')
+  return gulp.src('app/**/**.**')
         .pipe(watch())
         .pipe(livereload(server));
 });

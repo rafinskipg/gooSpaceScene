@@ -2,12 +2,26 @@ require([
 	'goo/entities/GooRunner',
 	'goo/statemachine/FSMSystem',
 	'goo/addons/howler/systems/HowlerSystem',
-	'goo/loaders/DynamicLoader'
+	'goo/loaders/DynamicLoader',
+	'goo/entities/SystemBus',
+	'goo/entities/components/CameraComponent'
+	,"goo/renderer/Camera",
+	'goo/math/Vector3',
+	'goo/entities/components/ScriptComponent',
+	'goo/scripts/WASDControlScript',
+	'goo/scripts/MouseLookControlScript'
 ], function (
 	GooRunner,
 	FSMSystem,
 	HowlerSystem,
-	DynamicLoader
+	DynamicLoader,
+	SystemBus,
+	CameraComponent,
+	Camera,
+	Vector3,
+	ScriptComponent,
+	WASDControlScript,
+	MouseLookControlScript
 ) {
 	'use strict';
 
@@ -100,6 +114,28 @@ require([
 				document.body.appendChild(goo.renderer.domElement);
 
 				// Application code goes here!
+				/*var cameraEntity = loader.getCachedObjectForRef('entities/Camera_0.entity');
+				goo.renderer.mainCamera = cameraEntity.cameraComponent;
+				console.log(goo.renderer.mainCamera);*/
+
+				var camera = new Camera(45, 1, 1, 1000);
+				var cameraEntity = goo.world.createEntity("CameraEntity");
+				cameraEntity.transformComponent.transform.translation.set(0, 0, 20);
+				cameraEntity.transformComponent.transform.lookAt(new Vector3(0, 0, 0), Vector3.UNIT_Y);
+				cameraEntity.setComponent(new CameraComponent(camera));
+				cameraEntity.addToWorld();
+
+				// Camera control set up
+				var scripts = new ScriptComponent();
+				scripts.scripts.push(new WASDControlScript({
+				    domElement : goo.renderer.domElement,
+				    walkSpeed : 25.0,
+				    crawlSpeed : 10.0
+				}));
+				scripts.scripts.push(new MouseLookControlScript({
+				    domElement : goo.renderer.domElement
+				}));
+				cameraEntity.setComponent(scripts);
 
 				// Start the rendering loop!
 				goo.startGameLoop();
