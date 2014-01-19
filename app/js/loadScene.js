@@ -148,6 +148,7 @@ require([
 				var sunTex = tc.loadTexture2D('images/sun.png');
 				var earthTex = tc.loadTexture2D('../images/earth.jpg');
 				var moonTex = tc.loadTexture2D('images/moon.jpg');
+				var mercuryTex = tc.loadTexture2D('images/mercury.jpg');
 
 				function createAstronomicalObject(radius, texture) {
 					var meshData = ShapeCreator.createSphere(24, 24, radius);
@@ -162,11 +163,11 @@ require([
 					return entity;
 				}
 				
-				var sun = createAstronomicalObject(100, sunTex);
+				var sun = createAstronomicalObject(1, sunTex);
 				sun.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,0.3,1];
 				
 				var earth = createAstronomicalObject(0.5, earthTex);
-				earth.transformComponent.setTranslation( 5, 0, 0);
+				earth.transformComponent.setTranslation( 15, 0, 0);
 				earth.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,1,1];
 				sun.transformComponent.attachChild( earth.transformComponent);
 				
@@ -175,6 +176,11 @@ require([
 				moon.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,1,1];
 				earth.transformComponent.attachChild( moon.transformComponent);
 				
+				var mercury = createAstronomicalObject(0.25, mercuryTex);
+				mercury.transformComponent.setTranslation( 5, 1, 0);
+				mercury.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,1,1];
+				sun.transformComponent.attachChild( mercury.transformComponent);
+
 				var light = new PointLight();
 				light.color.set( 1,1,0);
 				var lightEntity = EntityUtils.createTypicalEntity( goo.world, light);
@@ -184,7 +190,7 @@ require([
 				var camera = new Camera(45, 1, 0.1, 1000);
 				var cameraEntity = 	EntityUtils.createTypicalEntity(goo.world, camera, new OrbitCamControlScript(), [0,0,5]);
 				cameraEntity.addToWorld();
-			
+
 				// Camera control set up
 				/*var scripts = new ScriptComponent();
 				scripts.scripts.push(new WASDControlScript({
