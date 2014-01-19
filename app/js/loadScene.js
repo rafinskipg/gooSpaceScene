@@ -9,7 +9,14 @@ require([
 	'goo/math/Vector3',
 	'goo/entities/components/ScriptComponent',
 	'goo/scripts/WASDControlScript',
-	'goo/scripts/MouseLookControlScript'
+	'goo/scripts/MouseLookControlScript',
+	'goo/entities/EntityUtils',
+	'goo/renderer/Material',
+	'goo/renderer/TextureCreator',
+	'goo/renderer/light/PointLight',
+	'goo/renderer/shaders/ShaderLib',
+	'goo/scripts/OrbitCamControlScript',
+	'goo/shapes/ShapeCreator'
 ], function (
 	GooRunner,
 	FSMSystem,
@@ -21,7 +28,16 @@ require([
 	Vector3,
 	ScriptComponent,
 	WASDControlScript,
-	MouseLookControlScript
+	MouseLookControlScript,
+	EntityUtils,
+	Material,
+	TextureCreator,
+	PointLight,
+	ShaderLib,
+	OrbitCamControlScript,
+	ShapeCreator
+
+
 ) {
 	'use strict';
 
@@ -115,18 +131,62 @@ require([
 
 				// Application code goes here!
 				/*var cameraEntity = loader.getCachedObjectForRef('entities/Camera_0.entity');
-				goo.renderer.mainCamera = cameraEntity.cameraComponent;
+				//var cameraEntity = loader.getCachedObjectForRef('entities/Camera.entity');
+				goo.renderer.mainCamera = cameraEntity.cameraComponent.camera;
 				console.log(goo.renderer.mainCamera);*/
 
-				var camera = new Camera(45, 1, 1, 1000);
+				/*var camera = new Camera(45, 1, 1, 1000);
 				var cameraEntity = goo.world.createEntity("CameraEntity");
 				cameraEntity.transformComponent.transform.translation.set(0, 0, 20);
 				cameraEntity.transformComponent.transform.lookAt(new Vector3(0, 0, 0), Vector3.UNIT_Y);
 				cameraEntity.setComponent(new CameraComponent(camera));
-				cameraEntity.addToWorld();
+				cameraEntity.addToWorld();*/
+				
+				
 
+				var tc = new TextureCreator()
+				var sunTex = tc.loadTexture2D('images/sun.png');
+				var earthTex = tc.loadTexture2D('../images/earth.jpg');
+				var moonTex = tc.loadTexture2D('images/moon.jpg');
+
+				function createAstronomicalObject(radius, texture) {
+					var meshData = ShapeCreator.createSphere(24, 24, radius);
+					var material = Material.createMaterial(ShaderLib.uber);
+					material.setTexture('DIFFUSE_MAP', texture);
+					var entity = EntityUtils.createTypicalEntity(goo.world, meshData, material, {
+						run: function (entity) {
+							entity.transformComponent.setRotation( 0, goo.world.time * 0.5, 0);
+						}
+					});
+					entity.addToWorld();
+					return entity;
+				}
+				
+				var sun = createAstronomicalObject(100, sunTex);
+				sun.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,0.3,1];
+				
+				var earth = createAstronomicalObject(0.5, earthTex);
+				earth.transformComponent.setTranslation( 5, 0, 0);
+				earth.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,1,1];
+				sun.transformComponent.attachChild( earth.transformComponent);
+				
+				var moon = createAstronomicalObject(0.15, moonTex);
+				moon.transformComponent.setTranslation( 1.4, 0, 0);
+				moon.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,1,1];
+				earth.transformComponent.attachChild( moon.transformComponent);
+				
+				var light = new PointLight();
+				light.color.set( 1,1,0);
+				var lightEntity = EntityUtils.createTypicalEntity( goo.world, light);
+				lightEntity.addToWorld();
+
+
+				var camera = new Camera(45, 1, 0.1, 1000);
+				var cameraEntity = 	EntityUtils.createTypicalEntity(goo.world, camera, new OrbitCamControlScript(), [0,0,5]);
+				cameraEntity.addToWorld();
+			
 				// Camera control set up
-				var scripts = new ScriptComponent();
+				/*var scripts = new ScriptComponent();
 				scripts.scripts.push(new WASDControlScript({
 				    domElement : goo.renderer.domElement,
 				    walkSpeed : 25.0,
@@ -135,7 +195,7 @@ require([
 				scripts.scripts.push(new MouseLookControlScript({
 				    domElement : goo.renderer.domElement
 				}));
-				cameraEntity.setComponent(scripts);
+				cameraEntity.setComponent(scripts);*/
 
 				// Start the rendering loop!
 				goo.startGameLoop();
