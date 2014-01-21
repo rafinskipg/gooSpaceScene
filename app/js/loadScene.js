@@ -135,11 +135,12 @@ require([
 				var cameraEntity = loader.getCachedObjectForRef('entities/Camera_0.entity');
 				Renderer.mainCamera = cameraEntity.cameraComponent.camera;
 				goo.renderSystem.camera = cameraEntity.cameraComponent.camera;
+				
+				
+				goo.world.process();
 				SystemBus.emit('goo.setCurrentCamera', { 
 				  camera: cameraEntity.cameraComponent.camera
 				});
-				
-
 				/*var camera = new Camera(45, 1, 1, 1000);
 				var cameraEntity = goo.world.createEntity("CameraEntity");
 				cameraEntity.transformComponent.transform.translation.set(0, 0, 20);
@@ -168,21 +169,22 @@ require([
 					return entity;
 				}
 				
-				var sun = createAstronomicalObject(1, sunTex);
+				var sun = createAstronomicalObject(100, sunTex);
 				sun.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,0.3,1];
-				
-				var earth = createAstronomicalObject(0.5, earthTex);
-				earth.transformComponent.setTranslation( 15, 0, 0);
+				sun.transformComponent.setTranslation( -950, 30, 0);
+
+				var earth = createAstronomicalObject(20.5, earthTex);
+				earth.transformComponent.setTranslation( 150, 0, 0);
 				earth.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,1,1];
 				sun.transformComponent.attachChild( earth.transformComponent);
 				
-				var moon = createAstronomicalObject(0.15, moonTex);
+				var moon = createAstronomicalObject(5.15, moonTex);
 				moon.transformComponent.setTranslation( 1.4, 0, 0);
 				moon.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,1,1];
 				earth.transformComponent.attachChild( moon.transformComponent);
 				
-				var mercury = createAstronomicalObject(0.25, mercuryTex);
-				mercury.transformComponent.setTranslation( 5, 1, 0);
+				var mercury = createAstronomicalObject(10.25, mercuryTex);
+				mercury.transformComponent.setTranslation( 100, 1, 0);
 				mercury.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,1,1];
 				sun.transformComponent.attachChild( mercury.transformComponent);
 
