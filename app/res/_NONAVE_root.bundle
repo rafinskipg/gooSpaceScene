@@ -1,0 +1,153 @@
+{
+    "entities/SpotLight.entity": {
+        "components": {
+            "light": {
+                "angle": 45,
+                "attenuate": true,
+                "color": [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "direction": [
+                    0,
+                    0,
+                    0
+                ],
+                "intensity": 10,
+                "lightCookie": null,
+                "penumbra": 5,
+                "range": 50,
+                "shadowCaster": false,
+                "shadowSettings": {
+                    "darkness": 0,
+                    "far": 50,
+                    "fov": 45,
+                    "near": 1,
+                    "projection": "Perspective",
+                    "resolution": [
+                        256,
+                        256
+                    ],
+                    "shadowType": "VSM",
+                    "size": 400,
+                    "type": "Blur",
+                    "upVector": [
+                        0,
+                        1,
+                        0
+                    ]
+                },
+                "specularIntensity": 4.75,
+                "type": "SpotLight"
+            },
+            "transform": {
+                "rotation": [
+                    0,
+                    0,
+                    0
+                ],
+                "scale": [
+                    1,
+                    1,
+                    1
+                ],
+                "translation": [
+                    0,
+                    4.8289794921875,
+                    52.001434326171875
+                ]
+            }
+        },
+        "name": "SpotLight",
+        "ref": "entities/SpotLight.entity"
+    },
+    "missing_libraryRefs": [],
+    "project.project": {
+        "backgroundColor": [
+            0.75,
+            0.76,
+            0.78,
+            1
+        ],
+        "created": "2014-01-08T06:22:31.889707",
+        "deleted": false,
+        "edit": [],
+        "entityRefs": [
+            "entities/Disk.entity",
+            "entities/Sphere.entity",
+            "entities/Torus.entity",
+            "entities/Sphere_0.entity",
+            "entities/Camera.entity",
+            "entities/Sphere_1.entity",
+            "entities/Camera_0.entity",
+            "entities/SpotLight.entity"
+        ],
+        "fogColor": [
+            1,
+            1,
+            1
+        ],
+        "fogFar": 1000,
+        "fogNear": 0,
+        "globalAmbient": [
+            0,
+            0,
+            0
+        ],
+        "groupRefs": [
+            "root.group"
+        ],
+        "id": "lUYeseKRTz6dwjQC_qCcMw",
+        "licenseType": "CC0",
+        "modified": "2014-01-19T16:11:08.666534+00:00",
+        "name": "Escenario",
+        "originalLicenseType": null,
+        "own": [
+            "ACS9NTMXROun2tU4AgEoXA"
+        ],
+        "parent": null,
+        "posteffectRefs": [
+            "posteffects/Sepia.posteffect",
+            "posteffects/Bloom.posteffect",
+            "posteffects/Grain.posteffect",
+            "posteffects/Contrast.posteffect",
+            "posteffects/RgbShift.posteffect",
+            "posteffects/Vignette.posteffect",
+            "posteffects/Bleach.posteffect"
+        ],
+        "public": true,
+        "ref": "project.project",
+        "skybox": {
+            "environmentType": 1,
+            "imageUrls": [
+                "images/stars_texture2956.jpg",
+                "",
+                "",
+                "",
+                "images/waterfall-3d-backgrounds-wallpapers.jpg",
+                ""
+            ],
+            "rotation": 0,
+            "shape": "Sphere"
+        },
+        "useFog": false,
+        "view": [],
+        "weather": {
+            "snow": {
+                "enabled": false,
+                "height": 25,
+                "rate": 10,
+                "velocity": 10
+            }
+        }
+    },
+    "root.group": {
+        "libraryRefs": [
+            "entities/SpotLight.entity"
+        ],
+        "name": "root",
+        "ref": "root.group"
+    }
+}

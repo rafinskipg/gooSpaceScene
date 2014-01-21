@@ -16,6 +16,7 @@ require([
 	'goo/renderer/light/PointLight',
 	'goo/renderer/shaders/ShaderLib',
 	'goo/scripts/OrbitCamControlScript',
+	'goo/renderer/Renderer',
 	'goo/shapes/ShapeCreator'
 ], function (
 	GooRunner,
@@ -35,6 +36,7 @@ require([
 	PointLight,
 	ShaderLib,
 	OrbitCamControlScript,
+	Renderer,
 	ShapeCreator
 
 
@@ -130,10 +132,13 @@ require([
 				document.body.appendChild(goo.renderer.domElement);
 
 				// Application code goes here!
-				/*var cameraEntity = loader.getCachedObjectForRef('entities/Camera_0.entity');
-				//var cameraEntity = loader.getCachedObjectForRef('entities/Camera.entity');
-				goo.renderer.mainCamera = cameraEntity.cameraComponent.camera;
-				console.log(goo.renderer.mainCamera);*/
+				var cameraEntity = loader.getCachedObjectForRef('entities/Camera_0.entity');
+				Renderer.mainCamera = cameraEntity.cameraComponent.camera;
+				goo.renderSystem.camera = cameraEntity.cameraComponent.camera;
+				SystemBus.emit('goo.setCurrentCamera', { 
+				  camera: cameraEntity.cameraComponent.camera
+				});
+				
 
 				/*var camera = new Camera(45, 1, 1, 1000);
 				var cameraEntity = goo.world.createEntity("CameraEntity");
@@ -187,9 +192,10 @@ require([
 				lightEntity.addToWorld();
 
 
-				var camera = new Camera(45, 1, 0.1, 1000);
+				/*var camera = new Camera(45, 1, 0.1, 1000);
 				var cameraEntity = 	EntityUtils.createTypicalEntity(goo.world, camera, new OrbitCamControlScript(), [0,0,5]);
-				cameraEntity.addToWorld();
+				cameraEntity.addToWorld();*/
+			
 
 				// Camera control set up
 				/*var scripts = new ScriptComponent();
