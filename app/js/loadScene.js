@@ -17,7 +17,8 @@ require([
 	'goo/renderer/shaders/ShaderLib',
 	'goo/scripts/OrbitCamControlScript',
 	'goo/renderer/Renderer',
-	'goo/shapes/ShapeCreator'
+	'goo/shapes/ShapeCreator',
+	'js/computeSize'
 ], function (
 	GooRunner,
 	FSMSystem,
@@ -37,7 +38,8 @@ require([
 	ShaderLib,
 	OrbitCamControlScript,
 	Renderer,
-	ShapeCreator
+	ShapeCreator,
+	computeSize
 
 
 ) {
@@ -132,18 +134,27 @@ require([
 				document.body.appendChild(goo.renderer.domElement);
 
 				// Application code goes here!
-				/*var cameraEntity = loader.getCachedObjectForRef('entities/Camera_0.entity');
-				Renderer.mainCamera = cameraEntity.cameraComponent.camera;
-				goo.renderSystem.camera = cameraEntity.cameraComponent.camera;*/
+				var cameras = [];
+				var indexCameras = 0;
+				var changeCamera = true;
+				//Inside ship camera
+				var outsideAllCamera = loader.getCachedObjectForRef('entities/Camera_0.entity');
+				cameras.push(outsideAllCamera);
+				//Renderer.mainCamera = outsideAllCamera.cameraComponent.camera;
+				//goo.renderSystem.camera = outsideAllCamera.cameraComponent.camera;
 				
-				/*var camera = new Camera(45, 2, 2.1, 2000);
-				var cameraEntity = 	EntityUtils.createTypicalEntity(goo.world, camera, new OrbitCamControlScript(), [2,2,5]);*/
-				var camera = new Camera(45, 1, 1, 2000);
-				var cameraEntity = goo.world.createEntity("CameraEntity");
-				cameraEntity.transformComponent.transform.translation.set(10, 8, 0);
-				cameraEntity.transformComponent.transform.lookAt(new Vector3(-5, 8, 0), Vector3.UNIT_Y);
-				cameraEntity.setComponent(new CameraComponent(camera));
-				cameraEntity.addToWorld();
+				//Orbit camera
+				var camera = new Camera(45, 2, 2.1, 2000);
+				var orbitCamera = 	EntityUtils.createTypicalEntity(goo.world, camera, new OrbitCamControlScript(), [2,2,5]);
+				orbitCamera.transformComponent.transform.translation.set(100, 80, 0);
+				cameras.push(orbitCamera);
+
+				//Long distance camera
+				var camera = new Camera(45, 1, 1, 10.000);
+				var insideShipCamera = goo.world.createEntity("CameraEntity");
+				insideShipCamera.transformComponent.transform.translation.set(10, 8, 0);
+				insideShipCamera.transformComponent.transform.lookAt(new Vector3(-5, 8, 0), Vector3.UNIT_Y);
+				insideShipCamera.setComponent(new CameraComponent(camera));
 
 				// Camera control set up
 				var scripts = new ScriptComponent();
@@ -155,24 +166,47 @@ require([
 				scripts.scripts.push(new MouseLookControlScript({
 				    domElement : goo.renderer.domElement
 				}));
-				cameraEntity.setComponent(scripts);
-				
-                    cameraEntity.addToWorld();
+				insideShipCamera.setComponent(scripts);
+				cameras.push(insideShipCamera);
+                
+                cameras.forEach( function(cam){
+                	cam.addToWorld();
+                });
 			
-				goo.world.process();
-				SystemBus.emit('goo.setCurrentCamera', { 
-				  camera: cameraEntity.cameraComponent.camera
-				});
-				 
-				/*var camera = new Camera(45, 1, 1, 1000);
-				var cameraEntity = goo.world.createEntity("CameraEntity");
-				cameraEntity.transformComponent.transform.translation.set(0, 0, 20);
-				cameraEntity.transformComponent.transform.lookAt(new Vector3(0, 0, 0), Vector3.UNIT_Y);
-				cameraEntity.setComponent(new CameraComponent(camera));
-				cameraEntity.addToWorld();*/
-				
-				
 
+				goo.world.process();
+
+				var getMainCamera = function(){
+					if(indexCameras >= cameras.length){
+						indexCameras = 0;
+					}
+					var camera = cameras[indexCameras].cameraComponent.camera;
+					indexCameras += 1;
+					return camera;
+				}
+
+				SystemBus.emit('goo.setCurrentCamera', { 
+				  camera: getMainCamera()
+				});
+
+				
+				window.onkeyup= function(e){
+					changeCamera = true;
+				}
+
+				goo.callbacks.push(function() {
+					if(changeCamera === true){
+						goo.world.process();
+						SystemBus.emit('goo.setCurrentCamera', { 
+						  camera: getMainCamera()
+						});
+						changeCamera = false;
+					}
+				});
+
+				//Astronomic things
+
+				
 				var tc = new TextureCreator()
 				var sunTex = tc.loadTexture2D('images/sun.png');
 				var earthTex = tc.loadTexture2D('../images/earth.jpg');
@@ -192,9 +226,11 @@ require([
 					return entity;
 				}
 				
+				var sizes =  computeSize.compute(100);
+				console.log(sizes);
 				var sun = createAstronomicalObject(100, sunTex);
 				sun.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,0.3,1];
-				sun.transformComponent.setTranslation( -950, 30, 0);
+				sun.transformComponent.setTranslation( -999, 30, 0);
 
 				var earth = createAstronomicalObject(20.5, earthTex);
 				earth.transformComponent.setTranslation( 350, 0, 0);
@@ -216,8 +252,7 @@ require([
 				var lightEntity = EntityUtils.createTypicalEntity( goo.world, light);
 				lightEntity.addToWorld();
 
-
-
+			
 				
 
 				// Start the rendering loop!
