@@ -11,14 +11,10 @@ require([
 	'goo/scripts/WASDControlScript',
 	'goo/scripts/MouseLookControlScript',
 	'goo/entities/EntityUtils',
-	'goo/renderer/Material',
-	'goo/renderer/TextureCreator',
 	'goo/renderer/light/PointLight',
-	'goo/renderer/shaders/ShaderLib',
 	'goo/scripts/OrbitCamControlScript',
 	'goo/renderer/Renderer',
-	'goo/shapes/ShapeCreator',
-	'js/computeSize'
+	'js/spaceObject'
 ], function (
 	GooRunner,
 	FSMSystem,
@@ -32,16 +28,10 @@ require([
 	WASDControlScript,
 	MouseLookControlScript,
 	EntityUtils,
-	Material,
-	TextureCreator,
 	PointLight,
-	ShaderLib,
 	OrbitCamControlScript,
 	Renderer,
-	ShapeCreator,
-	computeSize
-
-
+	spaceObject
 ) {
 	'use strict';
 
@@ -147,6 +137,13 @@ require([
 				var camera = new Camera(45, 2, 2.1, 150000);
 				var orbitCamera = 	EntityUtils.createTypicalEntity(goo.world, camera, new OrbitCamControlScript(), [2,2,5]);
 				orbitCamera.transformComponent.transform.translation.set(100, 80, 0);
+				var scripts = new ScriptComponent();
+				scripts.scripts.push(new WASDControlScript({
+				    domElement : goo.renderer.domElement,
+				    walkSpeed : 2500.0,
+				    crawlSpeed : 100.0
+				}));
+				orbitCamera.setComponent(scripts);
 				cameras.push(orbitCamera);
 
 				//Long distance camera
@@ -160,8 +157,8 @@ require([
 				var scripts = new ScriptComponent();
 				scripts.scripts.push(new WASDControlScript({
 				    domElement : goo.renderer.domElement,
-				    walkSpeed : 25.0,
-				    crawlSpeed : 10.0
+				    walkSpeed : 2500.0,
+				    crawlSpeed : 100.0
 				}));
 				scripts.scripts.push(new MouseLookControlScript({
 				    domElement : goo.renderer.domElement
@@ -169,58 +166,14 @@ require([
 				insideShipCamera.setComponent(scripts);
 				cameras.push(insideShipCamera);
                 
+
         
-
-				//Astronomic things
-
-				
-				var tc = new TextureCreator()
-				var sunTex = tc.loadTexture2D('images/sun.png');
-				var earthTex = tc.loadTexture2D('../images/earth.jpg');
-				var moonTex = tc.loadTexture2D('images/moon.jpg');
-				var mercuryTex = tc.loadTexture2D('images/mercury.jpg');
-
-				function createAstronomicalObject(radius, texture) {
-					var meshData = ShapeCreator.createSphere(24, 24, radius);
-					var material = Material.createMaterial(ShaderLib.uber);
-					material.setTexture('DIFFUSE_MAP', texture);
-					var entity = EntityUtils.createTypicalEntity(goo.world, meshData, material, {
-						run: function (entity) {
-							entity.transformComponent.setRotation( 0, goo.world.time * 0.005, 0);
-						}
-					});
-					entity.addToWorld();
-					return entity;
-				}
-				var sunSize = 1000;
-				var sizes =  computeSize.compute(sunSize);
-				console.log(sizes);
-				var sun = createAstronomicalObject(sunSize, sunTex);
-				sun.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,0.3,1];
-				sun.transformComponent.setTranslation( -20000, 30, 0);
-
-				var earth = createAstronomicalObject(sizes.earth_size_m, earthTex);
-				earth.transformComponent.setTranslation( sunSize + sizes.earth_dist_meter, 0, 0);
-				earth.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,1,1];
-				sun.transformComponent.attachChild( earth.transformComponent);
-				
-				var moon = createAstronomicalObject(5.15, moonTex);
-				moon.transformComponent.setTranslation( 31.4, 0, 0);
-				moon.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,1,1];
-				earth.transformComponent.attachChild( moon.transformComponent);
-				
-				var camera = new Camera(45, 1, 1, 150000);
-				var eartchCamera = goo.world.createEntity("CameraEntity");
-				eartchCamera.transformComponent.transform.translation.set(50, -10, 0);
-				eartchCamera.transformComponent.transform.lookAt(new Vector3(-5, -5, 0), Vector3.UNIT_Y);
-				eartchCamera.setComponent(new CameraComponent(camera));
-				earth.transformComponent.attachChild( eartchCamera.transformComponent);
-				cameras.push(eartchCamera);
-
-				var mercury = createAstronomicalObject(sizes.merc_size_mm, mercuryTex);
-				mercury.transformComponent.setTranslation( sunSize + sizes.merc_dist_meter, 1, 0);
-				mercury.meshRendererComponent.materials[0].uniforms.materialAmbient = [1,1,1,1];
-				sun.transformComponent.attachChild( mercury.transformComponent);
+				spaceObject.loadSizes();
+				spaceObject.createObjects(goo);
+				spaceObject.getCameras().forEach(function(i){
+					cameras.push(i);
+				});
+				console.log(cameras);
 
 				var light = new PointLight();
 				light.color.set( 1,1,0);
@@ -233,7 +186,6 @@ require([
 				cameras.forEach( function(cam){
         	cam.addToWorld();
         });
-			
 
 				goo.world.process();
 
@@ -252,7 +204,9 @@ require([
 
 				
 				window.onkeyup= function(e){
-					changeCamera = true;
+					if(e.which == 32){
+						changeCamera = true;	
+					}
 				}
 
 				goo.callbacks.push(function() {

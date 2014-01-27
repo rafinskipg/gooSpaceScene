@@ -78,38 +78,6 @@ define([
         form.pluto_dist_inch = this.int_zero((scale_factor * 5913000000) % 12 * 100) /100;
         form.pluto_dist_meter = this.int_zero(scale_factor * 5913000000 * .0254 * 1000 ) / 1000;
 
-        form.speed_of_light = this.int_zero(scale_factor * 299792 * 1000 ) / 1000;
-        form.speed_of_light_mm = this.int_zero(scale_factor * 299792 * 25.4 * 10 ) / 10;
-
-        form.light_year_mi = this.int_zero(scale_factor * 9.46051E+12 / 12 / 5280 * 10 ) / 10;
-        form.light_year_km = this.int_zero(scale_factor * 9.46051E+12 * .0000254 * 10 ) / 10;
-
-        form.alpha_centauri_mi = this.int_zero(scale_factor * 4.03964E+13 / 12 / 5280 * 10 ) / 10;
-        form.alpha_centauri_km = this.int_zero(scale_factor * 4.03964E+13 * .0000254 * 10 ) / 10;
-
-        form.sirius_mi = this.int_zero(scale_factor * 8.17388E+13 / 12 / 5280 * 10 ) / 10;
-        form.sirius_km = this.int_zero(scale_factor * 8.17388E+13 * .0000254 * 10 ) / 10;
-
-        form.deneb_mi = this.int_zero(scale_factor * 1.32636E+16 / 12 / 5280 * 10 ) / 10;
-        form.deneb_km = this.int_zero(scale_factor * 1.32636E+16 * .0000254 * 10 ) / 10;
-
-        form.galactic_center_mi = this.int_zero(scale_factor * 2.62151E+17 / 12 / 5280 * 10 ) / 10;
-        form.galactic_center_km = this.int_zero(scale_factor * 2.62151E+17 * .0000254 * 10 ) / 10;
-
-        form.hottest_star_feet = this.int_zero(scale_factor * 12527100 / 12 *100 ) /100;
-        form.hottest_star_meter = this.int_zero(scale_factor * 12527100 * .0254 *100 ) /100;
-
-        form.coolest_star_inch = this.int_zero((scale_factor * 222704 ) * 100) / 100;
-        form.coolest_star_cm = this.int_zero(scale_factor * 222704 * 2.54 * 100 ) / 100;
-
-        form.red_giant_feet = this.int_zero(scale_factor * 521962500 / 12 * 10 ) / 10;
-        form.red_giant_meter = this.int_zero(scale_factor * 521962500 * .0254 * 10 ) / 10;
-
-        form.white_dwarf_inch = this.int_zero((scale_factor * 13919 ) * 10000 ) / 10000;
-        form.white_dwarf_mm = this.int_zero(scale_factor * 13919 * 25.4 * 1000 ) / 1000;
-
-        form.neutron_star_inch = this.int_zero((scale_factor * 20 ) * 1000000 ) / 1000000;
-        form.neutron_starr_mm = this.int_zero(scale_factor * 20 * 25.4 * 100000 ) / 100000;
         
         return form;
     }
