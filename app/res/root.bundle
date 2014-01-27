@@ -3,7 +3,7 @@
         "components": {
             "camera": {
                 "aspect": 1,
-                "far": 1000,
+                "far": 150000,
                 "fov": 45,
                 "lockedRatio": false,
                 "near": 1,
@@ -35,7 +35,7 @@
         "components": {
             "camera": {
                 "aspect": 1,
-                "far": 3000,
+                "far": 150000,
                 "fov": 76,
                 "lockedRatio": false,
                 "near": 1,
