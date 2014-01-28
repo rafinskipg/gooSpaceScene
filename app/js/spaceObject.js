@@ -26,7 +26,7 @@ define([
   //Astronomic things 
   var tc = new TextureCreator();
   var sunTex = tc.loadTexture2D('images/sun.png');
-  var earthTex = tc.loadTexture2D('../images/earth.jpg');
+  var earthTex = tc.loadTexture2D('images/earth.jpg');
   var moonTex = tc.loadTexture2D('images/moon.jpg');
   var mercuryTex = tc.loadTexture2D('images/mercury.jpg');
   var marsTex = tc.loadTexture2D('images/mars.jpg');
