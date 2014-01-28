@@ -1,6 +1,7 @@
 require([
 	'goo/entities/GooRunner',
 	'goo/statemachine/FSMSystem',
+	'goo/addons/howler/components/HowlerComponent',
 	'goo/addons/howler/systems/HowlerSystem',
 	'goo/loaders/DynamicLoader',
 	'goo/entities/SystemBus',
@@ -18,6 +19,7 @@ require([
 ], function (
 	GooRunner,
 	FSMSystem,
+	HowlerComponent,
 	HowlerSystem,
 	DynamicLoader,
 	SystemBus,
@@ -36,7 +38,7 @@ require([
 	'use strict';
 
 	function init() {
-
+		
 		// If you try to load a scene without a server, you're gonna have a bad time
 		if (window.location.protocol==='file:') {
 			alert('You need to run this webpage on a server. Check the code for links and details.');
@@ -109,16 +111,21 @@ require([
 			});
 			var fsm = new FSMSystem(goo);
 			goo.world.setSystem(fsm);
-			goo.world.setSystem(new HowlerSystem());
 
+			//Howler
+			var sound1 = new window.Howl({
+        urls: ['../res/Blues.mp3']
+    		});
+			 goo.world.setSystem(new HowlerSystem(goo.renderer));
+			
 			// The loader takes care of loading the data
 			var loader = new DynamicLoader({
 				world: goo.world,
 				rootPath: 'res',
 				progressCallback: progressCallback});
 
-			loader.loadFromBundle('project.project', 'root.bundle', {recursive: false, preloadBinaries: true}).then(function(configs) {
-
+				loader.loadFromBundle('project.project', 'root.bundle', {recursive: false, preloadBinaries: true}).then(function(configs) {
+				sound1.play();
 				// This code will be called when the project has finished loading.
 				goo.renderer.domElement.id = 'goo';
 				document.body.appendChild(goo.renderer.domElement);
@@ -133,21 +140,10 @@ require([
 				//Renderer.mainCamera = outsideAllCamera.cameraComponent.camera;
 				//goo.renderSystem.camera = outsideAllCamera.cameraComponent.camera;
 				
-				//Orbit camera
-				var camera = new Camera(45, 2, 2.1, 150000);
-				var orbitCamera = 	EntityUtils.createTypicalEntity(goo.world, camera, new OrbitCamControlScript(), [2,2,5]);
-				orbitCamera.transformComponent.transform.translation.set(100, 80, 0);
-				var scripts = new ScriptComponent();
-				scripts.scripts.push(new WASDControlScript({
-				    domElement : goo.renderer.domElement,
-				    walkSpeed : 2500.0,
-				    crawlSpeed : 100.0
-				}));
-				orbitCamera.setComponent(scripts);
-				cameras.push(orbitCamera);
+				
 
 				//Long distance camera
-				var camera = new Camera(45, 1, 1, 150000);
+				var camera = new Camera(90, 1, 1, 350000);
 				var insideShipCamera = goo.world.createEntity("CameraEntity");
 				insideShipCamera.transformComponent.transform.translation.set(10, 8, 0);
 				insideShipCamera.transformComponent.transform.lookAt(new Vector3(-5, 8, 0), Vector3.UNIT_Y);
@@ -166,12 +162,19 @@ require([
 				insideShipCamera.setComponent(scripts);
 				cameras.push(insideShipCamera);
                 
+				var camera3 = new Camera(90, 1, 1, 350000);
+				var camera3Camera = goo.world.createEntity("CameraEntity");
+				camera3Camera.transformComponent.transform.translation.set(150000, 100, -30000);
+				camera3Camera.transformComponent.transform.lookAt(new Vector3(-5, 8, 0), Vector3.UNIT_Y);
+				camera3Camera.setComponent(new CameraComponent(camera3));
+        camera3Camera.setComponent(scripts);
+				cameras.push(camera3Camera);
 
-        
+
 				spaceObject.loadSizes();
 				spaceObject.createObjects(goo);
 				spaceObject.getCameras().forEach(function(i){
-					cameras.push(i);
+					//cameras.push(i);
 				});
 				console.log(cameras);
 
